@@ -38,13 +38,11 @@
     document.addEventListener('DOMContentLoaded', () => {
         const loginForm = document.querySelector('.login-form');
         
-        // Define la URL donde está montada tu ruta de login (ej: http://localhost:3000/api/login)
-        const LOGIN_URL = 'http://localhost:3000/api/login'; 
+        const LOGIN_URL = '/login'; 
 
         loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Detiene el envío HTTP por defecto del formulario
+            e.preventDefault(); 
 
-            // 1. Obtener los valores de los inputs (usando los IDs del HTML)
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
@@ -54,25 +52,22 @@
             }
 
             try {
-                // 2. Enviar la petición POST al backend
                 const response = await fetch(LOGIN_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ email, password }) // Envía los datos como JSON
+                    body: JSON.stringify({ email, password }) 
                 });
 
                 const data = await response.json();
 
-                // 3. Manejar la respuesta del servidor
+                
                 if (response.ok) {
-                    // ÉXITO: Almacenar el token y redirigir
                     alert('¡Inicio de sesión exitoso!');
-                    localStorage.setItem('authToken', data.token); // Guarda el token para futuras peticiones
-                    window.location.href = '/dashboard.html'; // Redirige a la página principal del cliente
+                    localStorage.setItem('authToken', data.token); 
+                    window.location.href = '/index.html'; 
                 } else {
-                    // ERROR: Mostrar mensaje del backend
                     alert('Error: ' + (data.mensaje || 'Credenciales inválidas.'));
                 }
 

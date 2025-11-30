@@ -1,4 +1,3 @@
-// bd/db.js
 const mysql = require('mysql2/promise');
 
 const pool = mysql.createPool({
@@ -11,7 +10,7 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-// Comprobación opcional al iniciar
+
 (async () => {
   try {
     const conn = await pool.getConnection();
