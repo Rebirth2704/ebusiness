@@ -1,18 +1,25 @@
-const mysql = require('mysql2');
+// bd/db.js
+const mysql = require('mysql2/promise');
 
-  const conection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '123456',
-    database: 'darkkitchen',
-  });
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  password: '123456',
+  database: 'darkkitchen',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
 
-  conection.connect(err => {
-    if (err) {
-      console.error('Error al conectar a la base de datos:', err.stack);
-      return;
-    }
-    console.log('Conectado a la base de datos con ID:', conection.threadId);
-  });
+// Comprobación opcional al iniciar
+(async () => {
+  try {
+    const conn = await pool.getConnection();
+    console.log('Conectado a la base de datos, threadId:', conn.threadId);
+    conn.release();
+  } catch (err) {
+    console.error('Error al conectar a la base de datos:', err);
+  }
+})();
 
-module.exports = conection;
+module.exports = pool;
