@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Pitch Dark Kitchen</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { background-color: #121212; color: #e0e0e0; font-family: 'Montserrat', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; margin: 0; }
+        .admin-layout { display: flex; flex: 1; height: 100%; }
+        .left-panel { width: 30%; background-color: #000; padding: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 2px solid #333; }
+        .admin-logo { font-family: 'Playfair Display', serif; font-size: 2em; color: #ff6b6b; margin-bottom: 10px; }
+        .add-product-btn { background-color: #ff6b6b; color: white; border: none; padding: 20px 30px; font-size: 1.2em; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; max-width: 300px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .add-product-btn:hover { background-color: #ff5252; transform: translateY(-3px); }
+        .right-panel { width: 70%; background-color: #1a1a1a; padding: 40px; overflow-y: auto; }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+        
+        .admin-product-item { background-color: #252525; padding: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #333; margin-bottom: 10px; transition: background 0.3s; }
+        .admin-product-item:hover { border-color: #ff6b6b; }
+        
+        .item-info { display: flex; align-items: center; gap: 20px; }
+        .item-img { width: 60px; height: 60px; border-radius: 5px; object-fit: cover; background-color: #333; }
+        .item-details h4 { margin: 0; color: #fff; } .item-details p { margin: 5px 0 0; color: #888; font-size: 0.9em; }
+        .item-price { color: #ff6b6b; font-weight: bold; }
+        
+        .item-actions button { background: none; border: none; font-size: 1.2em; cursor: pointer; margin-left: 10px; transition: color 0.2s; }
+        .btn-edit { color: #888; } .btn-edit:hover { color: white; }
+        .btn-delete { color: #d9534f; } .btn-delete:hover { color: #ff0000; transform: scale(1.1); }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background-color: #1e1e1e; padding: 40px; border-radius: 10px; width: 90%; max-width: 500px; border: 1px solid #ff6b6b; position: relative; }
+        .close-modal { position: absolute; top: 15px; right: 20px; color: #888; font-size: 1.5em; cursor: pointer; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #ff6b6b; font-weight: bold; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; background-color: #121212; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; }
+        .submit-btn { width: 100%; background-color: #ff6b6b; color: white; padding: 15px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .bottom-bar { background-color: #000; padding: 15px; text-align: center; border-top: 1px solid #333; }
+        .switch-role-btn { text-decoration: none; color: #888; border: 1px solid #444; padding: 8px 20px; border-radius: 20px; }
+        .switch-role-btn:hover { color: white; background-color: #333; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-layout">
+        <aside class="left-panel">
+            <div class="admin-logo">DARK MANAGER</div>
+            <p style="color: #888; margin-bottom: 50px;">Gestión de Inventario</p>
+            <button class="add-product-btn" onclick="abrirModal()">
+                <i class="fas fa-plus-circle"></i> Nuevo Producto
+            </button>
+        </aside>
+
+        <main class="right-panel">
+            <div class="panel-header">
+                <h2 style="font-family: 'Playfair Display'; color:white;">Inventario Actual</h2>
+                <span style="color: #888;">Total: <b id="total-products">0</b> items</span>
+            </div>
+            
+            <div id="lista-productos-admin">
+                </div>
+        </main>
+    </div>
+
+    <footer class="bottom-bar">
+        <span style="color: #555; margin-right:15px;">Estás conectado como: <b>Vendedor</b></span>
+        <a href="login.html" class="switch-role-btn">Cerrar Sesión</a>
+    </footer>
+
+    <div class="modal-overlay" id="modalForm">
+        <div class="modal-content">
+            <span class="close-modal" onclick="cerrarModal()">&times;</span>
+            <h2 style="font-family: 'Playfair Display'; color: #ff6b6b; text-align: center;">Nuevo Platillo</h2>
+            
+            <form id="form-nuevo-producto">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" name="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select name="categoria_id" required>
+                        <option value="1">Hamburguesas</option>
+                        <option value="2">Pizzas</option>
+                        <option value="3">Tacos</option>
+                        <option value="4">Alitas</option>
+                        <option value="5">Burritos</option>
+                        <option value="6">Bebidas</option>
+                        <option value="7">Postres</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Precio ($)</label>
+                    <input type="number" name="precio" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea name="descripcion" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Imagen URL</label>
+                    <input type="text" name="imagen_url" placeholder="https://...">
+                </div>
+                <button type="submit" class="submit-btn">Guardar Producto</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/productos';
+
+        document.addEventListener('DOMContentLoaded', cargarProductosAdmin);
+
+        async function cargarProductosAdmin() {
+            const contenedor = document.getElementById('lista-productos-admin');
+            const contador = document.getElementById('total-products');
+            try {
+                const response = await fetch(API_URL);
+                const productos = await response.json();
+                
+                contador.innerText = productos.length;
+                contenedor.innerHTML = '';
+
+                if(productos.length === 0){
+                    contenedor.innerHTML = '<p style="text-align:center; color:#666;">No hay productos. ¡Agrega uno!</p>';
+                    return;
+                }
+
+                productos.forEach(prod => {
+                    const html = `
+                        <div class="admin-product-item">
+                            <div class="item-info">
+                                <img src="${prod.imagen_url || 'https://via.placeholder.com/60'}" class="item-img">
+                                <div class="item-details">
+                                    <h4>${prod.nombre}</h4>
+                                    <p>${prod.descripcion || ''}</p>
+                                </div>
+                            </div>
+                            <div class="item-actions">
+                                <span class="item-price">$${prod.precio}</span>
+                                <button class="btn-delete" onclick="eliminarProducto(${prod.producto_id})" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>`;
+                    contenedor.innerHTML += html;
+                });
+            } catch (error) {
+                console.error("Error cargando productos", error);
+            }
+        }
+        const formulario = document.getElementById('form-nuevo-producto');
+        formulario.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(formulario);
+            const datos = Object.fromEntries(formData.entries());
+            datos.precio = parseFloat(datos.precio);
+            datos.categoria_id = parseInt(datos.categoria_id);
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datos)
+                });
+
+                if (res.ok) {
+                    formulario.reset();
+                    cerrarModal();
+                    cargarProductosAdmin(); 
+                } else {
+                    alert('Error al guardar');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        });
+
+        async function eliminarProducto(id) {
+            if (!confirm('¿Estás seguro de que deseas eliminar este producto permanentemente?')) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (res.ok) {
+                    cargarProductosAdmin();
+                    alert('Producto eliminado.');
+                } else {
+                    alert('No se pudo eliminar el producto.');
+                }
+            } catch (error) {
+                console.error('Error al eliminar:', error);
+                alert('Error de conexión con el servidor.');
+            }
+        }
+
+        const modal = document.getElementById('modalForm');
+        function abrirModal() { modal.style.display = 'flex'; }
+        function cerrarModal() { modal.style.display = 'none'; }
+    </script>
+</body>
+</html>

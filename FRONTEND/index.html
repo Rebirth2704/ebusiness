@@ -3,52 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pitch Dark Kitchen - Pedidos Rápidos y Deliciosos</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Pitch Dark Kitchen - Menú</title>
+    <link rel="stylesheet" href="style.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 300px;
+        }
+        .product-card {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff6b6b;
+        }
+
+        .product-image {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .product-info {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-info h3 {
+            margin-top: 0;
+            font-family: 'Playfair Display', serif;
+            color: #f14c4c;
+            font-size: 1.2em;
+        }
+
+        .product-info p {
+            font-size: 0.9em;
+            color: #bbb;
+        }
+
+        .price {
+            font-weight: bold;
+            font-size: 1.2em;
+            display: block;
+            margin: 10px 0;
+            color: #fff;
+        }
+
+        .add-btn {
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: opacity 0.2s;
+        }
+        .add-btn:hover { opacity: 0.9; }
+        .navbar { display: flex; justify-content: space-between; padding: 20px; background: #000; border-bottom: 2px solid #ff6b6b; }
+        .logo { font-family: 'Playfair Display'; font-weight: bold; color: #ff6b6b; font-size: 1.5em; }
+        .nav-links { display: flex; align-items: center; }
+        .nav-links a { color: white; text-decoration: none; margin-left: 20px; font-weight: 600; }
+        .cart-icon { position: relative; }
+        #cart-count { 
+            background: #ff6b6b; color: white; border-radius: 50%; 
+            padding: 2px 6px; font-size: 12px; position: absolute; top: -8px; right: -10px; 
+        }
+
+        header { text-align: center; padding: 60px 20px; background: #1a1a1a; }
+        h1 { font-family: 'Playfair Display'; font-size: 2.5em; color: #ff6b6b; margin-bottom: 10px; }
+        #menu h2 { text-align: center; font-family: 'Playfair Display'; margin-top: 40px; color: #ff6b6b; }
+        footer { text-align: center; padding: 20px; margin-top: 40px; background: #000; border-top: 1px solid #333; }
+
+        .loading-msg { grid-column: 1 / -1; text-align: center; padding: 40px; color: #888; }
+
+
+        @media (max-width: 1024px) { .products-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 768px) { .products-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 480px) { .products-grid { grid-template-columns: 1fr; } }
+    </style>
 </head>
 <body>
+
+    <nav class="navbar">
+        <div class="logo">DARK KITCHEN</div>
+        <div class="nav-links">
+            <a href="#menu">Menú</a>
+            <a href="login.html">Cerrar sesion</a>
+            <a href="carrito.html" class="cart-icon"> 
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count">0</span>
+            </a>
+        </div>
+    </nav>
+
     <header>
-        <h1>DARKKITHCEN</h1>
-        <p>¡Tu comida favorita, a la velocidad de la luz!</p>
-        <a href="#menu" class="cta-button">Ver Menú y Ofertas</a>
+        <h1>SABOR EN LA OSCURIDAD</h1>
+        <p>Pide ahora y recibe en minutos.</p>
+        <a href="#menu" class="cta-button" style="color: #ebebeb; text-decoration: none; border: 2px solid #ff6b6b; padding: 10px 20px; border-radius: 4px; margin-top: 10px; display: inline-block;">Ver Productos</a>
     </header>
 
-    <section id="value-proposition">
-        <h2>🔥 Nuestra Propuesta de Valor</h2>
-        <div class="cards-container">
-            <div class="card">
-                <h3>Calidad Garantizada</h3>
-                <p>Sabor casero con recetas exclusivas. Usamos ingredientes frescos para platos que realmente disfrutas.</p>
-            </div>
-            <div class="card">
-                <h3>Entrega Express</h3>
-                <p>Experiencia digital ágil: fácil de pedir, rápida entrega. ¡Tu tiempo es oro!</p>
-            </div>
-            <div class="card">
-                <h3>Promociones Únicas</h3>
-                <p>Precios competitivos y promociones atractivas, ideales para fines de semana y grupos.</p>
-            </div>
+    <section id="menu">
+        <h2>🍔 Nuestro Menú</h2>
+        
+        <div class="products-grid" id="contenedor-productos">
+            <div class="loading-msg">Cargando deliciosos platillos...</div>
         </div>
-    </section>
 
-    <section id="promotions">
-        <h2>🎁 Promoción del Día</h2>
-        <div class="promo-box">
-            <p>¡Pide 2 Pizzas Familiares y llévate una Bebida GRATIS! Solo por hoy.</p>
-            <button>Pedir Ahora</button>
-        </div>
-        <p class="whatsapp-contact">¿Tienes preguntas? Contáctanos por WhatsApp: **+52 123 456 7890**</p>
     </section>
 
     <footer>
-        <p>&copy; 2025 Pitch Dark Kitchen. Todos los derechos reservados.</p>
-        <div class="app-links">
-            <p>Encuéntranos en:</p>
-            <img src="/img/dark.png" alt="Uber Eats Logo">
-            <img src="placeholder-rappi.png" alt="Rappi Logo">
-            <img src="placeholder-didi.png" alt="Didi Food Logo">
-        </div>
+        <p>&copy; 2025 Pitch Dark Kitchen.</p>
     </footer>
+
+    <script>
+        const API_URL = '/productos';
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchProductos();   
+            atualizarContador(); 
+        });
+        async function fetchProductos() {
+            const contenedor = document.getElementById('contenedor-productos');
+            
+            try {
+                const response = await fetch(API_URL);
+                                if (!response.ok) {
+                    throw new Error('Error al conectar con el servidor');
+                }
+                const productos = await response.json();
+                renderizarProductos(productos);
+            } catch (error) {
+                console.error("Error:", error);
+                contenedor.innerHTML = `<div class="loading-msg">❌ Error al cargar el menú. Asegúrate de que el servidor (Backend) esté encendido.</div>`;
+            }
+        }
+
+        function renderizarProductos(listaProductos) {
+            const contenedor = document.getElementById('contenedor-productos');
+            contenedor.innerHTML = ''; 
+
+            if (listaProductos.length === 0) {
+                contenedor.innerHTML = `<div class="loading-msg">No hay productos disponibles por el momento.</div>`;
+                return;
+            }
+
+            listaProductos.forEach(producto => {
+                if(producto.activo) {
+                    const precioNum = Number(producto.precio); 
+                    const tarjetaHTML = `
+                        <div class="product-card">
+                            <div class="product-image" style="background-image: url('${producto.imagen_url || 'https://via.placeholder.com/300'}');"></div>
+                            <div class="product-info">
+                                <h3>${producto.nombre}</h3>
+                                <p>${producto.descripcion || 'Sin descripción'}</p>
+                                <span class="price">$${precioNum.toFixed(2)}</span>
+                                <button class="add-btn" onclick="agregarAlCarrito(${producto.producto_id}, '${producto.nombre}', ${precioNum})">Agregar +</button>
+                            </div>
+                        </div>
+                    `;
+                    contenedor.innerHTML += tarjetaHTML;
+                }
+            });
+        }
+        function agregarAlCarrito(id, nombre, precio) {
+            let carrito = JSON.parse(localStorage.getItem('darkKitchenCart')) || [];
+            carrito.push({ id, nombre, precio });
+            localStorage.setItem('darkKitchenCart', JSON.stringify(carrito));
+            
+            atualizarContador();
+        }
+
+        function atualizarContador() {
+            let carrito = JSON.parse(localStorage.getItem('darkKitchenCart')) || [];
+            const countSpan = document.getElementById('cart-count');
+            if (countSpan) countSpan.innerText = carrito.length;
+        }
+    </script>
 </body>
 </html>

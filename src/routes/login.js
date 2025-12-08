@@ -31,7 +31,7 @@ return res.status(400).json({ mensaje: "Faltan email o contraseña" });
 }
 
 
-const [resultado] = await db.query("SELECT cliente_id, password_hash FROM cliente WHERE email = ?", [email]);
+const [resultado] = await db.query("SELECT cliente_id, password_hash, rol FROM cliente WHERE email = ?", [email]);
 const usuario = resultado[0];
 
 if (!usuario) {
@@ -46,7 +46,8 @@ const token = jwt.sign({ id: usuario.cliente_id }, SECRET_KEY, { expiresIn: '1h'
 
 res.json({ 
 mensaje: "Autenticación exitosa",
-token: token 
+token: token,
+rol:usuario.rol 
 });
 
 } catch (error) {

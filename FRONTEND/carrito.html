@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Carrito - Pitch Dark Kitchen</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">PITCH DARK KITCHEN</div>
+        <div class="nav-links">
+            <a href="index.html">Seguir Comprando</a>
+            <a href="#" class="cart-icon active">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count">0</span>
+            </a>
+        </div>
+    </nav>
+    <header style="min-height: 200px;">
+        <h1>TU PEDIDO</h1>
+        <p>Estás a un paso de disfrutar.</p>
+    </header>
+    <section id="carrito-section" style="min-height: 60vh;">
+        <div class="cart-container">
+            <div id="empty-cart-msg" style="display:none; text-align:center; padding: 20px;">
+                <h3>Tu carrito está vacío 😔</h3>
+                <a href="index.html" class="cta-link">Ir al Menú</a>
+            </div>
+            <table id="cart-table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Precio</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="cart-items">
+                    </tbody>
+            </table>
+            <div class="cart-summary" id="cart-summary">
+                <h3>Total: $<span id="cart-total">0.00</span></h3>
+                <button class="checkout-btn" onclick="procederAlPago()">Confirmar Pedido</button>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <p>&copy; 2025 Pitch Dark Kitchen.</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarCarrito();
+        });
+        function cargarCarrito() {
+            let carrito = JSON.parse(localStorage.getItem('darkKitchenCart')) || [];
+            let total = 0;
+            const tbody = document.getElementById('cart-items');
+            const countSpan = document.getElementById('cart-count');
+            const totalSpan = document.getElementById('cart-total');
+            const table = document.getElementById('cart-table');
+            const summary = document.getElementById('cart-summary');
+            const emptyMsg = document.getElementById('empty-cart-msg');
+            countSpan.innerText = carrito.length;
+            tbody.innerHTML = '';
+            if (carrito.length === 0) {
+                table.style.display = 'none';
+                summary.style.display = 'none';
+                emptyMsg.style.display = 'block';
+            } else {
+                table.style.display = 'table';
+                summary.style.display = 'block';
+                emptyMsg.style.display = 'none';
+                carrito.forEach((producto, index) => {
+                    total += producto.precio;
+                    const fila = document.createElement('tr');
+                    fila.innerHTML = `
+                        <td>${producto.nombre}</td>
+                        <td>$${producto.precio.toFixed(2)}</td>
+                        <td><button class="delete-btn" onclick="eliminarDelCarrito(${index})"><i class="fas fa-trash"></i></button></td>
+                    `;
+                    tbody.appendChild(fila);
+                });
+            }
+            totalSpan.innerText = total.toFixed(2);
+        }
+        function eliminarDelCarrito(index) {
+            let carrito = JSON.parse(localStorage.getItem('darkKitchenCart')) || [];
+            carrito.splice(index, 1);
+            localStorage.setItem('darkKitchenCart', JSON.stringify(carrito));
+            cargarCarrito();
+        }
+        function procederAlPago() {
+            let carrito = JSON.parse(localStorage.getItem('darkKitchenCart')) || [];
+            if (carrito.length === 0) {
+                alert("Tu carrito está vacío.");
+                return;
+            }
+            alert(`¡Pedido Confirmado! \nEnviando orden de ${carrito.length} productos a la cocina...`);
+            localStorage.removeItem('darkKitchenCart');
+            cargarCarrito();
+        }
+    </script>
+</body>
+</html>
